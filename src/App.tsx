@@ -1,25 +1,49 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { TodoItem } from './types';
 import './App.css';
+import { ItemCreator } from './ItemCreator';
+import { TodoList } from './TodoList';
 
-class App extends Component {
+interface State {
+  items: TodoItem[];
+};
+
+class App extends Component<{}, State> {
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {
+      items: [
+        { task: 'Pat the cows', hasCompleted: false },
+        { task: 'Shag the sheepies', hasCompleted: true },
+      ],
+    };
+  }
+
+  addItem(item: TodoItem) {
+    const { items } = this.state;
+    this.setState({
+      items: items.concat([item]),
+    });
+  }
+
+  updateItem(item: TodoItem, status: boolean) {
+    const { items } = this.state;
+    item.hasCompleted = status;
+    this.setState({
+      items: items,
+    });
+  }
+
   render() {
+    const { items } = this.state;
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <ItemCreator create={this.addItem.bind(this)} />
+        <TodoList
+          items={items}
+          update={this.updateItem.bind(this)}
+        />
       </div>
     );
   }
